@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { View, Text } from 'react-native';
+import { Card, Button } from 'react-native-elements';
 import Deck from './Deck';
 
 const DATA = [
@@ -16,7 +17,20 @@ const DATA = [
 export default class MainApp extends Component {
   renderCard = (item) => {
     return(
-      <Text>item.text</Text>
+      <Card
+        title={item.text}
+        image={{ uri: item.uri }}
+        key={item.id}
+      >
+        <Text style={{ marginBottom: 10 }}>
+          Bliggity bloop
+        </Text>
+        <Button
+          icon={{ name: 'code' }}
+          backgroundColor="#03A9F4"
+          title="Press my buttons"
+        />
+      </Card>
     );
   }
 
@@ -36,7 +50,7 @@ const styles = {
   container: {
     flex: 1,
     backgroundColor: '#fff',
-    justifyContent: 'center',
-    alignItems: 'center'
+    // justifyContent: 'center',
+    // alignItems: 'center'
   }
 }
