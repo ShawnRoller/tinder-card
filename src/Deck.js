@@ -14,11 +14,19 @@ class Deck extends PureComponent {
       onPanResponderMove: (event, gesture) => {
         position.setValue({ x: gesture.dx, y: gesture.dy });
       },
-      onPanResponderRelease: () => {}
+      onPanResponderRelease: () => {
+        this.resetPosition();
+      }
     });
 
     this.panResponder = panResponder;
     this.position = position;
+  }
+
+  resetPosition = () => {
+    Animated.spring(this.position, {
+      toValue: { x: 0, y: 0 }
+    }).start()
   }
 
   getCardStyle = () => {
