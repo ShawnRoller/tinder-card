@@ -7,6 +7,12 @@ const SWIPE_OUT_DURATION = 250;
 
 class Deck extends PureComponent {
 
+  static defaultProps = {
+    onSwipeRight: () => {},
+    onSwipeLeft: () => {},
+    renderNoMoreCards: () => {}
+  }
+
   constructor(props) {
     super(props);
 
@@ -43,7 +49,14 @@ class Deck extends PureComponent {
   onSwipeComplete = direction => {
     const { onSwipeLeft, onSwipeRight, data } = this.props;
     const item = data[this.state.index];
+
     direction === 'right' ? onSwipeRight(item) : onSwipeLeft(item);
+    this.setNextCard(this.state.index + 1)
+  }
+
+  setNextCard = (newIndex) => {
+    this.position.setValue({ x: 0, y: 0 });
+    this.setState({ index: newIndex });
   }
 
   resetPosition = () => {
@@ -64,8 +77,15 @@ class Deck extends PureComponent {
   }
 
   renderCards = () => {
-    return this.props.data.map((item, index) => {
-      if (index === 0) {
+    if (this.state.index >= this.props.data.length) {
+      return this.props.renderNoMoreCards();
+    }
+
+    return this.props.data.map((item, ix) => {
+
+      if (ix < this.state.index) return null;
+
+      if (ix === this.state.index) {
         return (
           <Animated.View
             key={item.id}
