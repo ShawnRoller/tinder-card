@@ -10,6 +10,7 @@ class Deck extends PureComponent {
   constructor(props) {
     super(props);
 
+    this.state = { index: 0 };
     const position = new Animated.ValueXY();
     const panResponder = PanResponder.create({
       onStartShouldSetPanResponder: () => true,
@@ -18,9 +19,9 @@ class Deck extends PureComponent {
       },
       onPanResponderRelease: (event, gesture) => {
         if (gesture.dx > SWIPE_THRESHOLD) {
-          this.forceSwipe(SCREEN_WIDTH);
+          this.forceSwipe('right');
         } else if (gesture.dx < -SWIPE_THRESHOLD) {
-          this.forceSwipe(-SCREEN_WIDTH);
+          this.forceSwipe('left');
         } else {
           this.resetPosition(); 
         }
@@ -31,11 +32,18 @@ class Deck extends PureComponent {
     this.position = position;
   }
 
-  forceSwipe = xPosition => {
+  forceSwipe = direction => {
+    const xPosition = direction === 'right' ? SCREEN_WIDTH : -SCREEN_WIDTH;
     Animated.timing(this.position, {
       toValue: { x: xPosition, y: 0 },
       duration: SWIPE_OUT_DURATION
-    }).start();
+    }).start(() => this.onSwipeComplete(direction));
+  }
+
+  onSwipeComplete = direction => {
+    const { onSwipeLeft, onSwipeRight, data } = this.props;
+    const item = data[this.state.index];
+    direction === 'right' ? onSwipeRight(item) : onSwipeLeft(item);
   }
 
   resetPosition = () => {
