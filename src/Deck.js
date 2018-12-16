@@ -17,6 +17,17 @@ class Deck extends PureComponent {
     super(props);
 
     this.state = { index: 0 };
+    this.setupCards();
+  }
+
+  componentWillReceiveProps(nextProps) {
+    if (nextProps.data !== this.props.data) {
+      this.setupCards();
+      this.setState({ index: 0 });
+    }
+  }
+
+  setupCards = () => {
     const position = new Animated.ValueXY();
     const panResponder = PanResponder.create({
       onStartShouldSetPanResponder: () => true,
@@ -89,15 +100,19 @@ class Deck extends PureComponent {
         return (
           <Animated.View
             key={item.id}
-            style={this.getCardStyle()}
+            style={[this.getCardStyle(), styles.cardStyle]}
             {...this.panResponder.panHandlers}
           >
             {this.props.renderCard(item)}
           </Animated.View>
         );
       }
-      return this.props.renderCard(item);
-    });
+      return (
+        <Animated.View style={styles.cardStyle} key={item.id}>
+          {this.props.renderCard(item)}
+        </Animated.View>
+      );
+    }).reverse();
   }
 
   render() {
@@ -108,6 +123,13 @@ class Deck extends PureComponent {
     );
   }
 
+}
+
+const styles = {
+  cardStyle: {
+    position: 'absolute',
+    width: SCREEN_WIDTH
+  }
 }
 
 export default Deck;
