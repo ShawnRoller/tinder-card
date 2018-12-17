@@ -1,5 +1,12 @@
 import React, { PureComponent } from 'react';
-import { View, Animated, PanResponder, Dimensions } from 'react-native';
+import { 
+  View, 
+  Animated, 
+  PanResponder, 
+  Dimensions,
+  LayoutAnimation,
+  UIManager,
+} from 'react-native';
 
 const SCREEN_WIDTH = Dimensions.get('window').width;
 const SWIPE_THRESHOLD = SCREEN_WIDTH * 0.25;
@@ -18,6 +25,11 @@ class Deck extends PureComponent {
 
     this.state = { index: 0 };
     this.setupCards();
+  }
+
+  componentWillUpdate() {
+    UIManager.setLayoutAnimationEnabledExperimental && UIManager.setLayoutAnimationEnabledExperimental(true);
+    LayoutAnimation.spring();
   }
 
   componentWillReceiveProps(nextProps) {
@@ -108,7 +120,10 @@ class Deck extends PureComponent {
         );
       }
       return (
-        <Animated.View style={styles.cardStyle} key={item.id}>
+        <Animated.View 
+          style={[styles.cardStyle, { top: 10 * (ix - this.state.index) }]} 
+          key={item.id}
+        >
           {this.props.renderCard(item)}
         </Animated.View>
       );
