@@ -29,7 +29,11 @@ export default class MainApp extends Component {
   constructor(props) {
     super(props);
 
-    this.state = { data: DATA };
+    this.state = { 
+      data: DATA,
+      rightCards: new Set(),
+      leftCards: new Set(),
+    };
   }
 
   renderCard = (item) => {
@@ -67,6 +71,21 @@ export default class MainApp extends Component {
     );
   }
 
+  onSwipeRight = (item) => {
+    const rightCards = this.state.rightCards;
+    rightCards.add(item);
+    this.setState({ rightCards });
+    console.log(this.state.rightCards);
+  }
+
+  onSwipeLeft = (item) => {
+    const leftCards = this.state.leftCards;
+    leftCards.add(item);
+    this.setState({ leftCards });
+    console.log(this.state.leftCards);
+
+  }
+
   restartDeck = () => {
     const newData = this.state.data === DATA ? DATA2 : DATA;
     console.log(newData);
@@ -80,6 +99,8 @@ export default class MainApp extends Component {
           data={this.state.data}
           renderCard={this.renderCard}
           renderNoMoreCards={this.renderNoMoreCards}
+          onSwipeRight={this.onSwipeRight}
+          onSwipeLeft={this.onSwipeLeft}
         />
       </View>
     );
