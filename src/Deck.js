@@ -11,6 +11,9 @@ import {
 const SCREEN_WIDTH = Dimensions.get('window').width;
 const SWIPE_THRESHOLD = SCREEN_WIDTH * 0.25;
 const SWIPE_OUT_DURATION = 250;
+const SCALE_INCREMENTOR = 0.02;
+const POSITION_INCREMENTOR = 12;
+const PADDING = 5;
 
 class Deck extends PureComponent {
 
@@ -23,7 +26,7 @@ class Deck extends PureComponent {
   constructor(props) {
     super(props);
 
-    this.state = { index: 0 };
+    this.state = { index: 0, itemPositions: [], itemScales: [] };
     this.setupCards();
   }
 
@@ -57,6 +60,18 @@ class Deck extends PureComponent {
       }
     });
 
+    var itemPositions = [];
+    var itemScales = [];
+  
+    this.props.data.map((item, index) => {
+      const newPosition = new Animated.ValueXY({ x: 0, y: POSITION_INCREMENTOR * index });
+      itemPositions.push(newPosition);
+
+      const newScale = new Animated.Value(1 - (index * SCALE_INCREMENTOR));
+      itemScales.push(newScale);
+    });
+
+    this.setState({ itemPositions, itemScales });
     this.panResponder = panResponder;
     this.position = position;
   }
