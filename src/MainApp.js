@@ -75,14 +75,14 @@ export default class MainApp extends Component {
     const rightCards = this.state.rightCards;
     rightCards.add(item);
     this.setState({ rightCards });
-    console.log(this.state.rightCards);
+    console.log("The right cards:", this.state.rightCards);
   }
 
   onSwipeLeft = (item) => {
     const leftCards = this.state.leftCards;
     leftCards.add(item);
     this.setState({ leftCards });
-    console.log(this.state.leftCards);
+    console.log("The left cards:", this.state.leftCards);
 
   }
 

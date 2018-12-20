@@ -27,7 +27,6 @@ class Deck extends PureComponent {
     super(props);
 
     this.state = { index: 0, itemPositions: [], itemScales: [] };
-    this.setupCards();
   }
 
   componentWillUpdate() {
@@ -40,6 +39,10 @@ class Deck extends PureComponent {
       this.setupCards();
       this.setState({ index: 0 });
     }
+  }
+
+  componentWillMount() {
+    this.setupCards();
   }
 
   setupCards = () => {
@@ -103,7 +106,7 @@ class Deck extends PureComponent {
     }).start()
   }
 
-  getCardStyle = () => {
+  getTopCardStyle = () => {
     const rotate = this.position.x.interpolate({
       inputRange: [-SCREEN_WIDTH * 1.5, 0, SCREEN_WIDTH * 1.5],
       outputRange: ['-120deg', '0deg', '120deg']
@@ -111,6 +114,17 @@ class Deck extends PureComponent {
     return {
       ...this.position.getLayout(),
       transform: [{ rotate }]
+    }
+  }
+
+  getCardStyleForIndex = (ix) => {
+    const position = this.state.itemPositions[ix];
+    const scale = this.state.itemScales[ix];
+
+    return {
+      ...position.getLayout(),
+      transform: [{ scale }],
+      top: PADDING * (ix - this.state.index)
     }
   }
 
@@ -127,7 +141,7 @@ class Deck extends PureComponent {
         return (
           <Animated.View
             key={item.id}
-            style={[this.getCardStyle(), styles.cardStyle]}
+            style={[this.getTopCardStyle(), styles.cardStyle]}
             {...this.panResponder.panHandlers}
           >
             {this.props.renderCard(item)}
@@ -136,8 +150,8 @@ class Deck extends PureComponent {
       }
       return (
         <Animated.View 
-          style={[styles.cardStyle, { top: 10 * (ix - this.state.index) }]} 
           key={item.id}
+          style={ this.getCardStyleForIndex(ix) }
         >
           {this.props.renderCard(item)}
         </Animated.View>
