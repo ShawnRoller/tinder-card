@@ -88,6 +88,7 @@ class Deck extends PureComponent {
   }
 
   onSwipeComplete = direction => {
+    this.bounceUp();
     const { onSwipeLeft, onSwipeRight, data } = this.props;
     const item = data[this.state.index];
 
@@ -113,7 +114,8 @@ class Deck extends PureComponent {
     })
     return {
       ...this.position.getLayout(),
-      transform: [{ rotate }]
+      transform: [{ rotate }],
+      zIndex: this.state.index * -1,
     }
   }
 
@@ -124,8 +126,31 @@ class Deck extends PureComponent {
     return {
       ...position.getLayout(),
       transform: [{ scale }],
-      top: PADDING * (ix - this.state.index)
+      zIndex: ix * -1,
     }
+  }
+
+  bounceUp = () => {
+    const positionAnimations = this.state.itemPositions.map((position) => {
+      return (
+        Animated.timing(position, {
+          toValue: { x: 0, y: position.__getValue().y - POSITION_INCREMENTOR },
+          duration: 100
+        })
+      );
+    });
+
+    const scaleAnimations = this.state.itemScales.map((scale) => {
+      return (
+        Animated.timing(scale, {
+          toValue: scale.__getValue() + SCALE_INCREMENTOR,
+          duration: 100
+        })
+      );
+    });
+
+    Animated.sequence(scaleAnimations).start();
+    Animated.sequence(positionAnimations).start();
   }
 
   renderCards = () => {
@@ -141,21 +166,22 @@ class Deck extends PureComponent {
         return (
           <Animated.View
             key={item.id}
-            style={[this.getTopCardStyle(), styles.cardStyle]}
+            style={[ this.getTopCardStyle(), styles.cardStyle ]}
             {...this.panResponder.panHandlers}
           >
             {this.props.renderCard(item)}
           </Animated.View>
         );
+      } else {
+        return (
+          <Animated.View 
+            key={item.id}
+            style={[ this.getCardStyleForIndex(ix), styles.cardStyle ]}
+          >
+            {this.props.renderCard(item)}
+          </Animated.View>
+        );
       }
-      return (
-        <Animated.View 
-          key={item.id}
-          style={ this.getCardStyleForIndex(ix) }
-        >
-          {this.props.renderCard(item)}
-        </Animated.View>
-      );
     }).reverse();
   }
 
