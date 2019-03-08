@@ -63,8 +63,8 @@ class Deck extends PureComponent {
       }
     });
 
-    var itemPositions = [];
-    var itemScales = [];
+    let itemPositions = [];
+    let itemScales = [];
   
     this.props.data.map((item, index) => {
       const newPosition = new Animated.ValueXY({ x: 0, y: POSITION_INCREMENTOR * index });
